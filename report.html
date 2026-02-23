@@ -620,8 +620,15 @@
     }
 
     async function loadBomFromQuery() {
+      const storageParam = qParams.get('storage');
       const dataParam = qParams.get('data');
       const sbomParam = qParams.get('sbom');
+
+      if (storageParam) {
+        const text = localStorage.getItem(storageParam);
+        if (!text) throw new Error('SBOM payload not found in browser storage (it may have expired or this URL was opened in a different browser).');
+        return JSON.parse(text);
+      }
 
       if (dataParam) {
         const text = fromBase64Url(dataParam);
@@ -634,7 +641,7 @@
         return await response.json();
       }
 
-      throw new Error('Missing query parameter. Use ?sbom=<url> or ?data=<base64-json>.');
+      throw new Error('Missing query parameter. Use ?storage=<key>, ?sbom=<url> or ?data=<base64-json>.');
     }
 
     function renderError(err) {
@@ -643,7 +650,7 @@
           <h2 style="margin-top:0">Cannot render report</h2>
           <div>${esc(String(err.message || err))}</div>
           <div style="margin-top:8px">Expected URL format: <strong>report.html?sbom=https://.../bom.json</strong></div>
-          <div style="margin-top:4px">or open from <a href="app.html" style="color:#b5c8ff">app.html</a>.</div>
+          <div style="margin-top:4px">or open from <a href="index.html" style="color:#b5c8ff">index.html</a>.</div>
         </div>
       `;
     }
