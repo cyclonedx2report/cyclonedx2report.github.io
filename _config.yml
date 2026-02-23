@@ -1,0 +1,2 @@
+title: cyclonedx2report
+description: Convert CycloneDX JSON SBOM files into interactive HTML security reports.

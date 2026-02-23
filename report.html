@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/x-icon" href="cyclonedx2report.ico" />
+  <link rel="shortcut icon" href="cyclonedx2report.ico" />
+  <title>cyclonedx2report - Report</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #131a2e;
+      --card-2: #0f1528;
+      --text: #e6edf7;
+      --muted: #9aa7bf;
+      --border: #26314f;
+      --th-text: #c8d6ef;
+      --th-bg: #121a31;
+
+      --sev-critical-bg: rgba(255,77,109,.2);
+      --sev-critical-text: #ff8aa0;
+      --sev-high-bg: rgba(255,138,61,.2);
+      --sev-high-text: #ffb17c;
+      --sev-medium-bg: rgba(255,209,102,.2);
+      --sev-medium-text: #ffe199;
+      --sev-low-bg: rgba(103,232,249,.2);
+      --sev-low-text: #a5f3fc;
+      --sev-info-bg: rgba(139,156,255,.2);
+      --sev-info-text: #c5d0ff;
+      --sev-unknown-bg: rgba(160,174,192,.2);
+      --sev-unknown-text: #d0d7e4;
+
+      --src-nvd-bg: rgba(255,77,109,.2);
+      --src-nvd-text: #ff8aa0;
+      --src-github-bg: rgba(139,156,255,.2);
+      --src-github-text: #c5d0ff;
+      --src-internal-bg: rgba(72,187,120,.22);
+      --src-internal-text: #b7f7c8;
+      --src-other-bg: rgba(160,174,192,.2);
+      --src-other-text: #d0d7e4;
+
+      --type-application-bg: rgba(124,92,255,.22);
+      --type-application-text: #d8ccff;
+      --type-library-bg: rgba(100,181,255,.22);
+      --type-library-text: #c9e7ff;
+      --type-service-bg: rgba(72,187,120,.22);
+      --type-service-text: #b7f7c8;
+      --type-unknown-bg: rgba(160,174,192,.2);
+      --type-unknown-text: #d0d7e4;
+
+      --lic-permissive-bg: rgba(72,187,120,.22);
+      --lic-permissive-text: #b7f7c8;
+      --lic-notice-bg: rgba(100,181,255,.22);
+      --lic-notice-text: #c9e7ff;
+      --lic-copyleft-bg: rgba(255,138,61,.22);
+      --lic-copyleft-text: #ffd0ab;
+      --lic-restricted-bg: rgba(255,77,109,.22);
+      --lic-restricted-text: #ffb0c0;
+      --lic-unknown-bg: rgba(160,174,192,.2);
+      --lic-unknown-text: #d0d7e4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 10% -10%, #1c2b50 0%, transparent 60%),
+                  radial-gradient(1000px 500px at 100% 0%, #2d1f5a 0%, transparent 60%),
+                  var(--bg);
+      color: var(--text);
+    }
+    body.light {
+      --bg: #f6f8fc;
+      --card: #ffffff;
+      --card-2: #f8fbff;
+      --text: #152033;
+      --muted: #5b6b86;
+      --border: #dbe3f0;
+      --th-text: #21314f;
+      --th-bg: #eef3fb;
+
+      --sev-critical-bg: rgba(214,45,79,.14);
+      --sev-critical-text: #9f1239;
+      --sev-high-bg: rgba(217,119,6,.14);
+      --sev-high-text: #92400e;
+      --sev-medium-bg: rgba(202,138,4,.14);
+      --sev-medium-text: #854d0e;
+      --sev-low-bg: rgba(2,132,199,.14);
+      --sev-low-text: #0c4a6e;
+      --sev-info-bg: rgba(79,70,229,.14);
+      --sev-info-text: #3730a3;
+      --sev-unknown-bg: rgba(100,116,139,.14);
+      --sev-unknown-text: #334155;
+
+      --src-nvd-bg: rgba(214,45,79,.14);
+      --src-nvd-text: #9f1239;
+      --src-github-bg: rgba(79,70,229,.14);
+      --src-github-text: #3730a3;
+      --src-internal-bg: rgba(22,163,74,.14);
+      --src-internal-text: #166534;
+      --src-other-bg: rgba(100,116,139,.14);
+      --src-other-text: #334155;
+
+      --type-application-bg: rgba(124,92,255,.14);
+      --type-application-text: #4c1d95;
+      --type-library-bg: rgba(91,141,239,.14);
+      --type-library-text: #1e3a8a;
+      --type-service-bg: rgba(22,163,74,.14);
+      --type-service-text: #166534;
+      --type-unknown-bg: rgba(100,116,139,.14);
+      --type-unknown-text: #334155;
+
+      --lic-permissive-bg: rgba(22,163,74,.14);
+      --lic-permissive-text: #166534;
+      --lic-notice-bg: rgba(91,141,239,.14);
+      --lic-notice-text: #1e3a8a;
+      --lic-copyleft-bg: rgba(217,119,6,.14);
+      --lic-copyleft-text: #92400e;
+      --lic-restricted-bg: rgba(214,45,79,.14);
+      --lic-restricted-text: #9f1239;
+      --lic-unknown-bg: rgba(100,116,139,.14);
+      --lic-unknown-text: #334155;
+      background: radial-gradient(1200px 600px at 10% -10%, #e8f0ff 0%, transparent 60%),
+                  radial-gradient(1000px 500px at 100% 0%, #efe9ff 0%, transparent 60%),
+                  var(--bg);
+    }
+    .container { max-width: 1280px; margin: 0 auto; padding: 28px; }
+    .hero {
+      background: linear-gradient(135deg, rgba(100,181,255,.16), rgba(124,92,255,.16));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    h1 { margin: 0 0 8px 0; font-size: 2rem; }
+    .sub { color: var(--muted); }
+    .section { margin: 18px 0 26px; }
+    .section h2 { margin: 0 0 10px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0 26px;
+    }
+    .kpi {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .kpi .label { color: var(--muted); font-size: .82rem; }
+    .kpi .value { font-size: 1.45rem; font-weight: 700; margin-top: 6px; }
+    .sev-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .sev-mini {
+      border-radius: 8px;
+      padding: 6px 4px;
+      text-align: center;
+      border: 1px solid var(--border);
+      font-weight: 700;
+      font-size: .85rem;
+    }
+    .card {
+      background: linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      overflow: hidden;
+    }
+    #chart { width: 100%; height: 560px; }
+    table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+    th, td { border-bottom: 1px solid var(--border); padding: 10px 8px; text-align: left; vertical-align: top; }
+    th { color: var(--th-text); position: sticky; top: 0; background: var(--th-bg); z-index: 1; }
+    .table-wrap { overflow: visible; border: 1px solid var(--border); border-radius: 12px; }
+    .filters {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr auto;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+    .filters input, .filters select {
+      width: 100%;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+    }
+    .filters .hint { color: var(--muted); font-size: .82rem; text-align: right; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: .76rem;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+    .sev-critical { background: var(--sev-critical-bg); color: var(--sev-critical-text); }
+    .sev-high { background: var(--sev-high-bg); color: var(--sev-high-text); }
+    .sev-medium { background: var(--sev-medium-bg); color: var(--sev-medium-text); }
+    .sev-low { background: var(--sev-low-bg); color: var(--sev-low-text); }
+    .sev-info { background: var(--sev-info-bg); color: var(--sev-info-text); }
+    .sev-unknown { background: var(--sev-unknown-bg); color: var(--sev-unknown-text); }
+    .src-nvd { background: var(--src-nvd-bg); color: var(--src-nvd-text); }
+    .src-github { background: var(--src-github-bg); color: var(--src-github-text); }
+    .src-internal { background: var(--src-internal-bg); color: var(--src-internal-text); }
+    .src-other { background: var(--src-other-bg); color: var(--src-other-text); }
+    .type-application { background: var(--type-application-bg); color: var(--type-application-text); }
+    .type-library { background: var(--type-library-bg); color: var(--type-library-text); }
+    .type-service { background: var(--type-service-bg); color: var(--type-service-text); }
+    .type-unknown { background: var(--type-unknown-bg); color: var(--type-unknown-text); }
+    .lic-permissive { background: var(--lic-permissive-bg); color: var(--lic-permissive-text); }
+    .lic-notice { background: var(--lic-notice-bg); color: var(--lic-notice-text); }
+    .lic-copyleft { background: var(--lic-copyleft-bg); color: var(--lic-copyleft-text); }
+    .lic-restricted { background: var(--lic-restricted-bg); color: var(--lic-restricted-text); }
+    .lic-unknown { background: var(--lic-unknown-bg); color: var(--lic-unknown-text); }
+    .footer { color: var(--muted); margin-top: 16px; font-size: .85rem; }
+    .error-panel {
+      border: 1px solid #7b2d3e;
+      border-radius: 12px;
+      padding: 14px;
+      color: #ffd7df;
+      background: rgba(123,45,62,.22);
+    }
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      #chart { height: 460px; }
+      .filters { grid-template-columns: 1fr; }
+      .filters .hint { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="appRoot"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script>
+    const qParams = new URLSearchParams(window.location.search);
+    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));
+
+    function fromBase64Url(input) {
+      const padded = input.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((input.length + 3) % 4);
+      const binary = atob(padded);
+      const bytes = Uint8Array.from(binary, ch => ch.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
+    }
+
+    function normalizeSeverity(value) {
+      const v = String(value || '').toLowerCase().trim();
+      return ['critical','high','medium','low','info','unknown'].includes(v) ? v : 'unknown';
+    }
+
+    function parseLicenses(item) {
+      return (item.licenses || []).map(e => e?.license?.id || e?.license?.name).filter(Boolean);
+    }
+
+    function licenseClass(name) {
+      const n = String(name || '').toLowerCase();
+      if (n.includes('mit')) return 'lic-permissive';
+      if (n.includes('apache') || n.includes('bsd')) return 'lic-notice';
+      if (n.includes('gpl') || n.includes('agpl') || n.includes('lgpl')) return 'lic-copyleft';
+      if (n.includes('proprietary') || n.includes('commercial')) return 'lic-restricted';
+      return 'lic-unknown';
+    }
+
+    function typeBadge(type) {
+      return `<span class="badge type-${esc((type || 'unknown').toLowerCase())}">${esc(String(type || 'unknown').toUpperCase())}</span>`;
+    }
+
+    function severityBadge(sev) {
+      return `<span class="badge sev-${esc(normalizeSeverity(sev))}">${esc(normalizeSeverity(sev).toUpperCase())}</span>`;
+    }
+
+    function sourceBadge(src) {
+      const raw = String(src || 'Unknown');
+      const n = raw.toLowerCase();
+      if (n.includes('nvd')) return '<span class="badge src-nvd" title="' + esc(raw) + '">NVD</span>';
+      if (n.includes('github')) return '<span class="badge src-github" title="' + esc(raw) + '">GITHUB</span>';
+      if (n.includes('internal')) return '<span class="badge src-internal" title="' + esc(raw) + '">INTERNAL</span>';
+      return '<span class="badge src-other" title="' + esc(raw) + '">' + esc(raw.toUpperCase()) + '</span>';
+    }
+
+    function listJoin(arr) {
+      return arr && arr.length ? arr.map(esc).join('<br>') : '-';
+    }
+
+    function buildEntities(bom) {
+      const entities = {};
+      const meta = bom?.metadata?.component || {};
+      if (meta['bom-ref']) {
+        entities[meta['bom-ref']] = {
+          ref: meta['bom-ref'], type: meta.type || 'application', name: meta.name || meta['bom-ref'],
+          version: meta.version || '', licenses: parseLicenses(meta), kind: 'metadata-component'
+        };
+      }
+      (bom.components || []).forEach(comp => {
+        const ref = comp['bom-ref'] || comp.purl;
+        if (!ref) return;
+        entities[ref] = {
+          ref, type: comp.type || 'library', name: comp.name || ref,
+          version: comp.version || '', licenses: parseLicenses(comp), kind: 'component'
+        };
+      });
+      (bom.services || []).forEach(svc => {
+        const ref = svc['bom-ref'];
+        if (!ref) return;
+        entities[ref] = { ref, type: 'service', name: svc.name || ref, version: svc.version || '', licenses: [], kind: 'service' };
+      });
+      return entities;
+    }
+
+    function buildGraph(bom, entities) {
+      const graph = {};
+      Object.keys(entities).forEach(ref => graph[ref] = []);
+      (bom.dependencies || []).forEach(dep => {
+        const ref = dep.ref;
+        if (!ref) return;
+        graph[ref] = (dep.dependsOn || []).filter(x => typeof x === 'string');
+        graph[ref].forEach(c => { if (!graph[c]) graph[c] = []; });
+      });
+      return graph;
+    }
+
+    function reverseGraph(graph) {
+      const rev = {};
+      Object.keys(graph).forEach(k => rev[k] = []);
+      Object.entries(graph).forEach(([src, tgts]) => tgts.forEach(t => {
+        if (!rev[t]) rev[t] = [];
+        rev[t].push(src);
+      }));
+      return rev;
+    }
+
+    function collectDependents(starts, rev) {
+      const seen = new Set();
+      const stack = [...starts];
+      while (stack.length) {
+        const node = stack.pop();
+        (rev[node] || []).forEach(parent => {
+          if (!seen.has(parent)) { seen.add(parent); stack.push(parent); }
+        });
+      }
+      return seen;
+    }
+
+    function componentLabel(ref, entities) {
+      const e = entities[ref];
+      if (!e) return ref;
+      return `${e.name || ref} ${e.version || ''}`.trim();
+    }
+
+    function parseVulns(bom) {
+      return (bom.vulnerabilities || []).map(v => {
+        const r = (v.ratings || [])[0] || {};
+        return {
+          id: v.id || v['bom-ref'] || 'UNKNOWN',
+          source: v?.source?.name || '',
+          severity: normalizeSeverity(r.severity || 'unknown'),
+          score: r.score,
+          description: v.description || '',
+          affects: (v.affects || []).map(a => a.ref).filter(Boolean)
+        };
+      });
+    }
+
+    function sankeyData(graph, entities) {
+      return {
+        nodes: Object.keys(graph).map(name => ({ name })),
+        links: Object.entries(graph).flatMap(([source, targets]) => targets.map(target => ({ source, target, value: 1 }))),
+        labels: Object.fromEntries(Object.keys(graph).map(ref => [ref, componentLabel(ref, entities)]))
+      };
+    }
+
+    function renderLayout(root, title, bom) {
+      root.innerHTML = `
+        <section class="hero">
+          <h1>${esc(title)}</h1>
+          <div class="sub">CycloneDX report generated on ${esc(new Date().toISOString())}</div>
+          <div class="sub">Timestamp: ${esc(bom?.metadata?.timestamp || '-')} · Tool: ${esc((bom?.metadata?.tools?.components?.[0]?.name || '-'))} ${esc((bom?.metadata?.tools?.components?.[0]?.version || ''))}</div>
+        </section>
+
+        <section class="section">
+          <h2>Summary</h2>
+          <div class="grid" id="summaryGrid"></div>
+        </section>
+
+        <section class="section">
+          <h2>Components chart</h2>
+          <div class="card"><div id="chart"></div></div>
+        </section>
+
+        <section class="section">
+          <h2>Components table</h2>
+          <div class="filters">
+            <input id="componentSearch" type="text" placeholder="Search component, version, dependency, license or vulnerability..." />
+            <select id="componentTypeFilter">
+              <option value="all">All types</option>
+              <option value="application">Application</option>
+              <option value="library">Library</option>
+              <option value="service">Service</option>
+            </select>
+            <select id="componentRiskFilter">
+              <option value="all">All risk states</option>
+              <option value="direct">With direct vulnerabilities</option>
+              <option value="transitive">With transitive risk</option>
+              <option value="any">With any risk</option>
+              <option value="none">No known risk</option>
+            </select>
+            <div id="componentCount" class="hint">0 shown</div>
+          </div>
+          <div class="card table-wrap">
+            <table id="componentsTable">
+              <thead><tr><th>Component</th><th>Type</th><th>Version</th><th>Direct dependencies</th><th>Licenses</th><th>Direct vulnerabilities</th><th>Transitive risk (1 hop)</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Vulnerabilities table</h2>
+          <div class="filters">
+            <input id="vulnSearch" type="text" placeholder="Search vulnerability id, source, description or affected component..." />
+            <select id="vulnSeverityFilter">
+              <option value="all">All severities</option>
+              <option value="critical">Critical</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+              <option value="info">Info</option>
+              <option value="unknown">Unknown</option>
+            </select>
+            <select id="vulnImpactFilter">
+              <option value="all">All impact types</option>
+              <option value="direct">Directly affecting components</option>
+              <option value="transitive">With transitive impact</option>
+              <option value="both">Direct + transitive</option>
+            </select>
+            <div id="vulnCount" class="hint">0 shown</div>
+          </div>
+          <div class="card table-wrap">
+            <table id="vulnerabilitiesTable">
+              <thead><tr><th>Vulnerability</th><th>Severity</th><th>Score</th><th>Directly affected components</th><th>Transitively affected components</th><th>Source</th><th>Description</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <div class="footer">Generated from CycloneDX ${esc(bom?.specVersion || '-')}.</div>
+      `;
+    }
+
+    function renderSummary(entities, graph, vulns) {
+      const sev = { critical:0, high:0, medium:0, low:0, info:0, unknown:0 };
+      vulns.forEach(v => sev[normalizeSeverity(v.severity)]++);
+      const veryLow = sev.info + sev.unknown;
+      const uniqueLic = new Set(Object.values(entities).flatMap(e => e.licenses || [])).size;
+      const roots = (() => {
+        const incoming = Object.fromEntries(Object.keys(graph).map(k => [k,0]));
+        Object.values(graph).forEach(t => t.forEach(n => incoming[n] = (incoming[n] || 0) + 1));
+        return Object.values(incoming).filter(x => x === 0).length;
+      })();
+
+      document.getElementById('summaryGrid').innerHTML = `
+        <div class="kpi"><div class="label">Components + Services</div><div class="value">${Object.keys(entities).length}</div></div>
+        <div class="kpi"><div class="label">Dependencies Edges</div><div class="value">${Object.values(graph).reduce((a,b)=>a+b.length,0)}</div></div>
+        <div class="kpi"><div class="label">Vulnerabilities</div><div class="value">${vulns.length}</div>
+          <div class="sev-mini-grid">
+            <div class="sev-mini sev-critical">${sev.critical}</div>
+            <div class="sev-mini sev-high">${sev.high}</div>
+            <div class="sev-mini sev-medium">${sev.medium}</div>
+            <div class="sev-mini sev-low">${sev.low}</div>
+            <div class="sev-mini sev-info">${veryLow}</div>
+          </div>
+        </div>
+        <div class="kpi"><div class="label">Critical / High</div><div class="value">${sev.critical} / ${sev.high}</div></div>
+        <div class="kpi"><div class="label">Licenses (unique)</div><div class="value">${uniqueLic}</div></div>
+        <div class="kpi"><div class="label">Root Nodes</div><div class="value">${roots}</div></div>
+      `;
+    }
+
+    function renderChart(graph, entities) {
+      const sk = sankeyData(graph, entities);
+      const chart = echarts.init(document.getElementById('chart'));
+      chart.setOption({
+        backgroundColor: 'transparent',
+        tooltip: {
+          trigger: 'item',
+          formatter: function (p) {
+            if (p.dataType === 'edge') {
+              const src = sk.labels[p.data.source] || p.data.source;
+              const tgt = sk.labels[p.data.target] || p.data.target;
+              return '<strong>' + esc(src) + '</strong> → <strong>' + esc(tgt) + '</strong>';
+            }
+            return '<strong>' + esc(sk.labels[p.data.name] || p.data.name) + '</strong>';
+          }
+        },
+        series: [{
+          type: 'sankey',
+          data: sk.nodes,
+          links: sk.links,
+          left: 10,
+          right: 150,
+          top: 10,
+          bottom: 10,
+          nodeWidth: 16,
+          nodeGap: 10,
+          lineStyle: { color: '#7c5cff', opacity: 0.35, curveness: 0.5 },
+          itemStyle: { color: '#7c5cff', borderColor: '#10172d', borderWidth: 1 },
+          label: {
+            color: document.body.classList.contains('light') ? '#152033' : '#dbe7ff',
+            overflow: 'truncate',
+            width: 200,
+            formatter: p => sk.labels[p.name] || p.name
+          },
+          emphasis: { focus: 'adjacency' }
+        }]
+      });
+      window.addEventListener('resize', () => chart.resize());
+    }
+
+    function renderTables(entities, graph, vulns) {
+      const vulnByComponent = {};
+      vulns.forEach(v => v.affects.forEach(ref => (vulnByComponent[ref] = (vulnByComponent[ref] || []).concat([v.id]))));
+
+      const compBody = document.querySelector('#componentsTable tbody');
+      compBody.innerHTML = Object.entries(entities)
+        .sort((a,b) => (a[1].name || '').localeCompare(b[1].name || ''))
+        .map(([ref, info]) => {
+          const deps = graph[ref] || [];
+          const direct = [...new Set(vulnByComponent[ref] || [])];
+          const trans = [...new Set(deps.flatMap(d => vulnByComponent[d] || []))];
+          return `<tr data-type="${esc((info.type||'').toLowerCase())}" data-direct-vulns="${direct.length}" data-transitive-vulns="${trans.length}">
+            <td>${esc(componentLabel(ref, entities))}</td>
+            <td>${typeBadge(info.type)}</td>
+            <td>${esc(info.version || '')}</td>
+            <td>${listJoin(deps.map(d => componentLabel(d, entities)))}</td>
+            <td>${(info.licenses||[]).length ? (info.licenses||[]).map(l => `<span class="badge ${licenseClass(l)}">${esc(l)}</span>`).join(' ') : '<span class="badge lic-unknown">NO LICENSE</span>'}</td>
+            <td>${listJoin(direct)}</td>
+            <td>${listJoin(trans)}</td>
+          </tr>`;
+        }).join('');
+
+      const rev = reverseGraph(graph);
+      const vulnBody = document.querySelector('#vulnerabilitiesTable tbody');
+      vulnBody.innerHTML = vulns
+        .sort((a,b) => String(b.severity).localeCompare(String(a.severity)))
+        .map(v => {
+          const trans = [...collectDependents(v.affects, rev)].filter(x => !v.affects.includes(x));
+          return `<tr data-severity="${esc(normalizeSeverity(v.severity))}" data-direct-count="${v.affects.length}" data-transitive-count="${trans.length}">
+            <td>${esc(v.id)}</td>
+            <td>${severityBadge(v.severity)}</td>
+            <td>${esc(v.score == null ? '-' : v.score)}</td>
+            <td>${listJoin(v.affects.map(r => componentLabel(r, entities)))}</td>
+            <td>${listJoin(trans.map(r => componentLabel(r, entities)))}</td>
+            <td>${sourceBadge(v.source)}</td>
+            <td>${esc(v.description.length > 260 ? v.description.slice(0,260) + '...' : v.description)}</td>
+          </tr>`;
+        }).join('');
+    }
+
+    function setupFilters() {
+      const cRows = () => [...document.querySelectorAll('#componentsTable tbody tr')];
+      const applyComp = () => {
+        const qv = document.getElementById('componentSearch').value.trim().toLowerCase();
+        const type = document.getElementById('componentTypeFilter').value;
+        const risk = document.getElementById('componentRiskFilter').value;
+        let shown = 0;
+        cRows().forEach(row => {
+          const txt = row.textContent.toLowerCase();
+          const rowType = row.getAttribute('data-type') || '';
+          const d = Number(row.getAttribute('data-direct-vulns') || '0');
+          const t = Number(row.getAttribute('data-transitive-vulns') || '0');
+          const ok = (type === 'all' || rowType === type)
+            && (!qv || txt.includes(qv))
+            && (risk === 'all' || (risk === 'direct' && d > 0) || (risk === 'transitive' && t > 0) || (risk === 'any' && (d > 0 || t > 0)) || (risk === 'none' && d === 0 && t === 0));
+          row.style.display = ok ? '' : 'none';
+          if (ok) shown++;
+        });
+        document.getElementById('componentCount').textContent = `${shown} shown`;
+      };
+
+      const vRows = () => [...document.querySelectorAll('#vulnerabilitiesTable tbody tr')];
+      const applyVuln = () => {
+        const qv = document.getElementById('vulnSearch').value.trim().toLowerCase();
+        const sev = document.getElementById('vulnSeverityFilter').value;
+        const imp = document.getElementById('vulnImpactFilter').value;
+        let shown = 0;
+        vRows().forEach(row => {
+          const txt = row.textContent.toLowerCase();
+          const rowSev = row.getAttribute('data-severity') || 'unknown';
+          const d = Number(row.getAttribute('data-direct-count') || '0');
+          const t = Number(row.getAttribute('data-transitive-count') || '0');
+          const ok = (!qv || txt.includes(qv))
+            && (sev === 'all' || rowSev === sev)
+            && (imp === 'all' || (imp === 'direct' && d > 0) || (imp === 'transitive' && t > 0) || (imp === 'both' && d > 0 && t > 0));
+          row.style.display = ok ? '' : 'none';
+          if (ok) shown++;
+        });
+        document.getElementById('vulnCount').textContent = `${shown} shown`;
+      };
+
+      ['componentSearch','componentTypeFilter','componentRiskFilter'].forEach(id => {
+        document.getElementById(id).addEventListener('input', applyComp);
+        document.getElementById(id).addEventListener('change', applyComp);
+      });
+      ['vulnSearch','vulnSeverityFilter','vulnImpactFilter'].forEach(id => {
+        document.getElementById(id).addEventListener('input', applyVuln);
+        document.getElementById(id).addEventListener('change', applyVuln);
+      });
+
+      applyComp();
+      applyVuln();
+    }
+
+    async function loadBomFromQuery() {
+      const dataParam = qParams.get('data');
+      const sbomParam = qParams.get('sbom');
+
+      if (dataParam) {
+        const text = fromBase64Url(dataParam);
+        return JSON.parse(text);
+      }
+
+      if (sbomParam) {
+        const response = await fetch(sbomParam, { cache: 'no-cache' });
+        if (!response.ok) throw new Error(`Unable to fetch SBOM URL: ${response.status}`);
+        return await response.json();
+      }
+
+      throw new Error('Missing query parameter. Use ?sbom=<url> or ?data=<base64-json>.');
+    }
+
+    function renderError(err) {
+      document.getElementById('appRoot').innerHTML = `
+        <div class="error-panel">
+          <h2 style="margin-top:0">Cannot render report</h2>
+          <div>${esc(String(err.message || err))}</div>
+          <div style="margin-top:8px">Expected URL format: <strong>report.html?sbom=https://.../bom.json</strong></div>
+          <div style="margin-top:4px">or open from <a href="app.html" style="color:#b5c8ff">app.html</a>.</div>
+        </div>
+      `;
+    }
+
+    async function main() {
+      try {
+        const template = (qParams.get('template') || 'main').toLowerCase();
+        if (template === 'light') document.body.classList.add('light');
+
+        const bom = await loadBomFromQuery();
+        const title = qParams.get('title') || `${bom?.metadata?.component?.name || 'CycloneDX SBOM'} - Security & Dependency Report`;
+
+        renderLayout(document.getElementById('appRoot'), title, bom);
+
+        const entities = buildEntities(bom);
+        const graph = buildGraph(bom, entities);
+        const vulns = parseVulns(bom);
+
+        renderSummary(entities, graph, vulns);
+        renderChart(graph, entities);
+        renderTables(entities, graph, vulns);
+        setupFilters();
+      } catch (err) {
+        renderError(err);
+      }
+    }
+
+    main();
+  </script>
+</body>
+</html>

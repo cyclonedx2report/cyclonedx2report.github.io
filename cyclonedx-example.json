@@ -1,0 +1,423 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.5b.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:3e671687-395b-41f5-a30f-a58921a69b79",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-02-23T10:00:00Z",
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "author": "Acme Inc",
+          "name": "Acme SBOM Generator",
+          "version": "2026.1.0"
+        }
+      ]
+    },
+    "component": {
+      "type": "application",
+      "bom-ref": "pkg:npm/acme/webapp@1.0.0",
+      "name": "Acme WebApp",
+      "version": "1.0.0",
+      "description": "Main customer-facing web application",
+      "purl": "pkg:npm/acme/webapp@1.0.0"
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/express@4.18.2",
+      "name": "express",
+      "version": "4.18.2",
+      "description": "Fast, unopinionated, minimalist web framework",
+      "purl": "pkg:npm/express@4.18.2",
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "a24fa6df1... (truncated for example)"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/accepts@1.3.8",
+      "name": "accepts",
+      "version": "1.3.8",
+      "description": "Higher-level content negotiation",
+      "purl": "pkg:npm/accepts@1.3.8",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1",
+      "group": "org.apache.logging.log4j",
+      "name": "log4j-core",
+      "version": "2.14.1",
+      "description": "Apache Log4j Core",
+      "purl": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1?type=jar",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/lodash@4.17.20",
+      "name": "lodash",
+      "version": "4.17.20",
+      "description": "A modern JavaScript utility library",
+      "purl": "pkg:npm/lodash@4.17.20",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/axios@0.27.2",
+      "name": "axios",
+      "version": "0.27.2",
+      "description": "Promise based HTTP client for the browser and node.js",
+      "purl": "pkg:npm/axios@0.27.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.13.2",
+      "group": "com.fasterxml.jackson.core",
+      "name": "jackson-databind",
+      "version": "2.13.2",
+      "description": "General data-binding functionality for Jackson",
+      "purl": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.13.2?type=jar",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:maven/org.springframework/spring-core@5.3.17",
+      "group": "org.springframework",
+      "name": "spring-core",
+      "version": "5.3.17",
+      "description": "Spring Core",
+      "purl": "pkg:maven/org.springframework/spring-core@5.3.17?type=jar",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:pypi/urllib3@1.26.5",
+      "name": "urllib3",
+      "version": "1.26.5",
+      "description": "HTTP library with thread-safe connection pooling",
+      "purl": "pkg:pypi/urllib3@1.26.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "bom-ref": "b2a46a4b-8367-4bae-9820-95557cfe03a8",
+      "provider": {
+        "name": "Stripe"
+      },
+      "group": "Payment Services",
+      "name": "Stripe API",
+      "version": "v1",
+      "endpoints": [
+        "https://api.stripe.com/"
+      ],
+      "authenticated": true,
+      "x-trust-boundary": true,
+      "data": [
+        {
+          "flow": "inbound",
+          "classification": "Customer Financial Data"
+        },
+        {
+          "flow": "outbound",
+          "classification": "Payment Tokens"
+        }
+      ]
+    },
+    {
+      "bom-ref": "4a5dd4b8-5351-4624-8d97-bf1f8f95f3a1",
+      "provider": {
+        "name": "Auth0"
+      },
+      "group": "Identity",
+      "name": "Auth0 API",
+      "version": "v2",
+      "endpoints": [
+        "https://YOUR_DOMAIN.auth0.com/api/v2/"
+      ],
+      "authenticated": true,
+      "x-trust-boundary": true,
+      "data": [
+        {
+          "flow": "inbound",
+          "classification": "User Credentials"
+        },
+        {
+          "flow": "outbound",
+          "classification": "Access Tokens"
+        }
+      ]
+    },
+    {
+      "bom-ref": "2cc59013-5349-4e68-a6a5-aafbcf9572cb",
+      "provider": {
+        "name": "SendGrid"
+      },
+      "group": "Messaging",
+      "name": "SendGrid API",
+      "version": "v3",
+      "endpoints": [
+        "https://api.sendgrid.com/v3/"
+      ],
+      "authenticated": true,
+      "x-trust-boundary": true,
+      "data": [
+        {
+          "flow": "outbound",
+          "classification": "Transactional Emails"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:npm/acme/webapp@1.0.0",
+      "dependsOn": [
+        "pkg:npm/express@4.18.2",
+        "pkg:npm/lodash@4.17.20",
+        "pkg:npm/axios@0.27.2",
+        "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1",
+        "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.13.2",
+        "pkg:maven/org.springframework/spring-core@5.3.17",
+        "pkg:pypi/urllib3@1.26.5",
+        "b2a46a4b-8367-4bae-9820-95557cfe03a8"
+      ]
+    },
+    {
+      "ref": "pkg:npm/express@4.18.2",
+      "dependsOn": [
+        "pkg:npm/accepts@1.3.8"
+      ]
+    },
+    {
+      "ref": "pkg:npm/accepts@1.3.8",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/lodash@4.17.20",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/axios@0.27.2",
+      "dependsOn": [
+        "pkg:pypi/urllib3@1.26.5"
+      ]
+    },
+    {
+      "ref": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.13.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:maven/org.springframework/spring-core@5.3.17",
+      "dependsOn": [
+        "4a5dd4b8-5351-4624-8d97-bf1f8f95f3a1",
+        "2cc59013-5349-4e68-a6a5-aafbcf9572cb"
+      ]
+    },
+    {
+      "ref": "pkg:pypi/urllib3@1.26.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "4a5dd4b8-5351-4624-8d97-bf1f8f95f3a1",
+      "dependsOn": []
+    },
+    {
+      "ref": "2cc59013-5349-4e68-a6a5-aafbcf9572cb",
+      "dependsOn": []
+    }
+  ],
+  "vulnerabilities": [
+    {
+      "bom-ref": "vuln-cve-2021-44228",
+      "id": "CVE-2021-44228",
+      "source": {
+        "name": "NVD",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2021-44228"
+      },
+      "ratings": [
+        {
+          "source": {
+            "name": "NVD"
+          },
+          "score": 10.0,
+          "severity": "critical",
+          "method": "CVSSv31",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H"
+        }
+      ],
+      "cwes": [
+        502,
+        400,
+        20
+      ],
+      "description": "Apache Log4j2 2.0-beta9 through 2.14.1 (excluding security releases) JNDI features used in configuration, log messages, and parameters do not protect against attacker controlled LDAP and other JNDI related endpoints. An attacker who can control log messages or log message parameters can execute arbitrary code loaded from LDAP servers when message lookup substitution is enabled.",
+      "affects": [
+        {
+          "ref": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1"
+        }
+      ]
+    },
+    {
+      "bom-ref": "vuln-ghsa-lodash-2021",
+      "id": "GHSA-35jh-r3h4-6jhm",
+      "source": {
+        "name": "GitHub Advisory Database",
+        "url": "https://github.com/advisories/GHSA-35jh-r3h4-6jhm"
+      },
+      "ratings": [
+        {
+          "source": {
+            "name": "GitHub"
+          },
+          "score": 7.4,
+          "severity": "high",
+          "method": "CVSSv31",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L"
+        }
+      ],
+      "description": "Prototype pollution vulnerability in lodash versions prior to patched releases.",
+      "affects": [
+        {
+          "ref": "pkg:npm/lodash@4.17.20"
+        }
+      ]
+    },
+    {
+      "bom-ref": "vuln-cve-2022-22965",
+      "id": "CVE-2022-22965",
+      "source": {
+        "name": "NVD",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-22965"
+      },
+      "ratings": [
+        {
+          "source": {
+            "name": "NVD"
+          },
+          "score": 9.8,
+          "severity": "critical",
+          "method": "CVSSv31",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        }
+      ],
+      "description": "Spring Framework RCE vulnerability (Spring4Shell) in specific deployment conditions.",
+      "affects": [
+        {
+          "ref": "pkg:maven/org.springframework/spring-core@5.3.17"
+        }
+      ]
+    },
+    {
+      "bom-ref": "vuln-cve-2022-42920",
+      "id": "CVE-2022-42920",
+      "source": {
+        "name": "NVD",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2022-42920"
+      },
+      "ratings": [
+        {
+          "source": {
+            "name": "NVD"
+          },
+          "score": 5.3,
+          "severity": "medium",
+          "method": "CVSSv31",
+          "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N"
+        }
+      ],
+      "description": "Potential request smuggling risk in urllib3 under certain proxy configurations.",
+      "affects": [
+        {
+          "ref": "pkg:pypi/urllib3@1.26.5"
+        }
+      ]
+    },
+    {
+      "bom-ref": "vuln-example-low-0001",
+      "id": "EXAMPLE-LOW-0001",
+      "source": {
+        "name": "Internal Security Team",
+        "url": "https://security.acme.local/advisories/EXAMPLE-LOW-0001"
+      },
+      "ratings": [
+        {
+          "source": {
+            "name": "Internal"
+          },
+          "score": 3.1,
+          "severity": "low",
+          "method": "CVSSv31",
+          "vector": "CVSS:3.1/AV:N/AC:H/PR:L/UI:R/S:U/C:L/I:N/A:N"
+        }
+      ],
+      "description": "Low risk information disclosure via verbose error responses in older axios release.",
+      "affects": [
+        {
+          "ref": "pkg:npm/axios@0.27.2"
+        }
+      ]
+    }
+  ]
+}
