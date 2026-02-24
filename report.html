@@ -266,6 +266,7 @@
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <script>
     const qParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.startsWith('#') ? window.location.hash.slice(1) : '');
     const esc = (value) => String(value ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));
 
     function fromBase64Url(input) {
@@ -273,6 +274,18 @@
       const binary = atob(padded);
       const bytes = Uint8Array.from(binary, ch => ch.charCodeAt(0));
       return new TextDecoder().decode(bytes);
+    }
+
+    async function gunzipFromBase64Url(input) {
+      if (typeof DecompressionStream !== 'function') {
+        throw new Error('This browser cannot decompress shared payload links.');
+      }
+      const padded = input.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((input.length + 3) % 4);
+      const binary = atob(padded);
+      const bytes = Uint8Array.from(binary, ch => ch.charCodeAt(0));
+      const decompressedStream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+      const decompressedBuffer = await new Response(decompressedStream).arrayBuffer();
+      return new TextDecoder().decode(decompressedBuffer);
     }
 
     function normalizeSeverity(value) {
@@ -731,12 +744,18 @@
 
     async function loadBomFromQuery() {
       const storageParam = qParams.get('storage');
-      const dataParam = qParams.get('data');
+      const gzipParam = qParams.get('gz') || hashParams.get('gz');
+      const dataParam = qParams.get('data') || hashParams.get('data');
       const sbomParam = qParams.get('sbom');
 
       if (storageParam) {
         const text = localStorage.getItem(storageParam);
         if (!text) throw new Error('SBOM payload not found in browser storage (it may have expired or this URL was opened in a different browser).');
+        return JSON.parse(text);
+      }
+
+      if (gzipParam) {
+        const text = await gunzipFromBase64Url(gzipParam);
         return JSON.parse(text);
       }
 
@@ -751,7 +770,7 @@
         return await response.json();
       }
 
-      throw new Error('Missing query parameter. Use ?storage=<key>, ?sbom=<url> or ?data=<base64-json>.');
+      throw new Error('Missing payload. Use #gz=<compressed-base64>, #data=<base64-json>, ?sbom=<url> or ?storage=<key>.');
     }
 
     function renderError(err) {
@@ -759,7 +778,7 @@
         <div class="error-panel">
           <h2 style="margin-top:0">Cannot render report</h2>
           <div>${esc(String(err.message || err))}</div>
-          <div style="margin-top:8px">Expected URL format: <strong>report.html?sbom=https://.../bom.json</strong></div>
+          <div style="margin-top:8px">Expected URL format: <strong>report.html?title=My%20Report#gz=&lt;compressed-payload&gt;</strong></div>
           <div style="margin-top:4px">or open from <a href="index.html" style="color:#b5c8ff">index.html</a>.</div>
         </div>
       `;
