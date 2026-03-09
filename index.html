@@ -485,6 +485,7 @@
     </section>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
   <script>
     const q = (id) => document.getElementById(id);
 
@@ -494,14 +495,13 @@
       return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
     }
 
-    async function gzipToBase64Url(text) {
-      if (typeof CompressionStream !== 'function') {
-        throw new Error('CompressionStream is not available in this browser.');
+    function gzipToBase64Url(text) {
+      if (!window.pako) {
+        throw new Error('Pako library is not available in this browser session.');
       }
       const inputBytes = new TextEncoder().encode(text);
-      const compressedStream = new Blob([inputBytes]).stream().pipeThrough(new CompressionStream('gzip'));
-      const compressedBuffer = await new Response(compressedStream).arrayBuffer();
-      return toBase64UrlFromBytes(new Uint8Array(compressedBuffer));
+      const compressedBytes = window.pako.gzip(inputBytes);
+      return toBase64UrlFromBytes(compressedBytes);
     }
 
     function buildShareableDataTarget(template, title, mode, payload) {
@@ -534,15 +534,8 @@
         }
 
         const text = await file.text();
-        let target;
-
-        try {
-          const gzPayload = await gzipToBase64Url(text);
-          target = buildShareableDataTarget(template, title, 'gz', gzPayload);
-        } catch (_) {
-          const b64Payload = toBase64UrlFromBytes(new TextEncoder().encode(text));
-          target = buildShareableDataTarget(template, title, 'data', b64Payload);
-        }
+        const gzPayload = gzipToBase64Url(text);
+        const target = buildShareableDataTarget(template, title, 'gz', gzPayload);
 
         const win = window.open(target, '_blank');
         if (!win) throw new Error('Pop-up blocked. Please allow pop-ups for this site.');
@@ -573,14 +566,8 @@
         if (!response.ok) throw new Error('Could not load cyclonedx-example.json');
         const exampleText = await response.text();
 
-        let target;
-        try {
-          const gzPayload = await gzipToBase64Url(exampleText);
-          target = buildShareableDataTarget(template, titleInput || 'CycloneDX Example Report', 'gz', gzPayload);
-        } catch (_) {
-          const b64Payload = toBase64UrlFromBytes(new TextEncoder().encode(exampleText));
-          target = buildShareableDataTarget(template, titleInput || 'CycloneDX Example Report', 'data', b64Payload);
-        }
+        const gzPayload = gzipToBase64Url(exampleText);
+        const target = buildShareableDataTarget(template, titleInput || 'CycloneDX Example Report', 'gz', gzPayload);
 
         const win = window.open(target, '_blank');
         if (!win) throw new Error('Pop-up blocked. Please allow pop-ups for this site.');

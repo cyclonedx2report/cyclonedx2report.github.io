@@ -264,6 +264,7 @@
   <div class="container" id="appRoot"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
   <script>
     const qParams = new URLSearchParams(window.location.search);
     const hashParams = new URLSearchParams(window.location.hash.startsWith('#') ? window.location.hash.slice(1) : '');
@@ -276,16 +277,14 @@
       return new TextDecoder().decode(bytes);
     }
 
-    async function gunzipFromBase64Url(input) {
-      if (typeof DecompressionStream !== 'function') {
-        throw new Error('This browser cannot decompress shared payload links.');
+    function gunzipFromBase64Url(input) {
+      if (!window.pako) {
+        throw new Error('Pako library is not available in this browser session.');
       }
       const padded = input.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((input.length + 3) % 4);
       const binary = atob(padded);
       const bytes = Uint8Array.from(binary, ch => ch.charCodeAt(0));
-      const decompressedStream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-      const decompressedBuffer = await new Response(decompressedStream).arrayBuffer();
-      return new TextDecoder().decode(decompressedBuffer);
+      return window.pako.ungzip(bytes, { to: 'string' });
     }
 
     function normalizeSeverity(value) {
@@ -755,7 +754,7 @@
       }
 
       if (gzipParam) {
-        const text = await gunzipFromBase64Url(gzipParam);
+        const text = gunzipFromBase64Url(gzipParam);
         return JSON.parse(text);
       }
 
