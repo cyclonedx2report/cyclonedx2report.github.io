@@ -267,14 +267,12 @@
   <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
   <script>
     const qParams = new URLSearchParams(window.location.search);
-    const hashParams = new URLSearchParams(window.location.hash.startsWith('#') ? window.location.hash.slice(1) : '');
     const esc = (value) => String(value ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));
 
-    function fromBase64Url(input) {
-      const padded = input.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((input.length + 3) % 4);
-      const binary = atob(padded);
-      const bytes = Uint8Array.from(binary, ch => ch.charCodeAt(0));
-      return new TextDecoder().decode(bytes);
+    function getPakoPayloadFromHash() {
+      const hash = window.location.hash || '';
+      if (!hash.startsWith('#pako:')) return null;
+      return hash.slice('#pako:'.length);
     }
 
     function gunzipFromBase64Url(input) {
@@ -742,34 +740,13 @@
     }
 
     async function loadBomFromQuery() {
-      const storageParam = qParams.get('storage');
-      const gzipParam = qParams.get('gz') || hashParams.get('gz');
-      const dataParam = qParams.get('data') || hashParams.get('data');
-      const sbomParam = qParams.get('sbom');
-
-      if (storageParam) {
-        const text = localStorage.getItem(storageParam);
-        if (!text) throw new Error('SBOM payload not found in browser storage (it may have expired or this URL was opened in a different browser).');
-        return JSON.parse(text);
+      const pakoPayload = getPakoPayloadFromHash();
+      if (!pakoPayload) {
+        throw new Error('Missing payload. Use URL fragment #pako:<compressed-base64>.');
       }
 
-      if (gzipParam) {
-        const text = gunzipFromBase64Url(gzipParam);
-        return JSON.parse(text);
-      }
-
-      if (dataParam) {
-        const text = fromBase64Url(dataParam);
-        return JSON.parse(text);
-      }
-
-      if (sbomParam) {
-        const response = await fetch(sbomParam, { cache: 'no-cache' });
-        if (!response.ok) throw new Error(`Unable to fetch SBOM URL: ${response.status}`);
-        return await response.json();
-      }
-
-      throw new Error('Missing payload. Use #gz=<compressed-base64>, #data=<base64-json>, ?sbom=<url> or ?storage=<key>.');
+      const text = gunzipFromBase64Url(pakoPayload);
+      return JSON.parse(text);
     }
 
     function renderError(err) {
@@ -777,7 +754,7 @@
         <div class="error-panel">
           <h2 style="margin-top:0">Cannot render report</h2>
           <div>${esc(String(err.message || err))}</div>
-          <div style="margin-top:8px">Expected URL format: <strong>report.html?title=My%20Report#gz=&lt;compressed-payload&gt;</strong></div>
+          <div style="margin-top:8px">Expected URL format: <strong>report.html?title=My%20Report#pako:&lt;compressed-payload&gt;</strong></div>
           <div style="margin-top:4px">or open from <a href="index.html" style="color:#b5c8ff">index.html</a>.</div>
         </div>
       `;

@@ -420,10 +420,10 @@
 
     <section id="shareable-link" class="section">
       <h2>Shareable link</h2>
-      <p class="section-intro">Links are fully shareable with no backend: local SBOM content is compressed into the report URL fragment (`#gz=...`) so you can open the same report on another computer.</p>
+      <p class="section-intro">Links are fully shareable with no backend: local SBOM content is compressed into the report URL fragment (`#pako:...`) so you can open the same report on another computer.</p>
       <div class="faq-item" style="margin-bottom:0;">
         <h3>Example</h3>
-        <p style="word-break: break-all;">https://cyclonedx2report.github.io/cyclonedx2report/report.html?template=light&amp;title=Acme%20Security%20Report#gz=H4sIAAAAA...</p>
+        <p style="word-break: break-all;">https://cyclonedx2report.github.io/cyclonedx2report/report.html?template=light&amp;title=Acme%20Security%20Report#pako:eNqtmUly4zYUhq_i...</p>
       </div>
     </section>
 
@@ -504,13 +504,11 @@
       return toBase64UrlFromBytes(compressedBytes);
     }
 
-    function buildShareableDataTarget(template, title, mode, payload) {
+    function buildShareableDataTarget(template, title, payload) {
       const params = new URLSearchParams();
       params.set('template', template);
       if (title) params.set('title', title);
-      const hash = new URLSearchParams();
-      hash.set(mode, payload);
-      return `report.html?${params.toString()}#${hash.toString()}`;
+      return `report.html?${params.toString()}#pako:${payload}`;
     }
 
     q('generateBtn').addEventListener('click', async () => {
@@ -535,7 +533,7 @@
 
         const text = await file.text();
         const gzPayload = gzipToBase64Url(text);
-        const target = buildShareableDataTarget(template, title, 'gz', gzPayload);
+        const target = buildShareableDataTarget(template, title, gzPayload);
 
         const win = window.open(target, '_blank');
         if (!win) throw new Error('Pop-up blocked. Please allow pop-ups for this site.');
@@ -567,7 +565,7 @@
         const exampleText = await response.text();
 
         const gzPayload = gzipToBase64Url(exampleText);
-        const target = buildShareableDataTarget(template, titleInput || 'CycloneDX Example Report', 'gz', gzPayload);
+        const target = buildShareableDataTarget(template, titleInput || 'CycloneDX Example Report', gzPayload);
 
         const win = window.open(target, '_blank');
         if (!win) throw new Error('Pop-up blocked. Please allow pop-ups for this site.');
